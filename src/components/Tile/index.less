@@ -1,0 +1,39 @@
+.tile {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 3px outset #aaa;
+    background-color: #c9c9c9;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 13px;
+    font-weight: bold;
+    &:hover {
+        background-color: #dee6ed;
+    }
+    &.number,
+    &.open {
+        border: 1px solid grey;
+        padding: 2px;
+    }
+    &.number {
+        background-color: rgb(213, 187, 191);
+    }
+    &.flagged {
+        background-color: red;
+        background-color: rgba(255, 61, 61, 0.82);
+    }
+    &.question {
+        background-color: lightblue;
+    }
+    &.explode {
+        color: red;
+        background-color: white;
+    }
+    &.unknown:active {
+        border-style: inset;
+    }
+    &.test {
+        border-style: inset;
+    }
+}
