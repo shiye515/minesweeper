@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 
 import config from '../config';
 
-import { CHANGE_ROUTER, CHANGE_LEVEL, FILL_MAP, CREATE_MAP, MARK_MAP, GAME_PERIOD } from './actions'
+import { CHANGE_ROUTER, CHANGE_LEVEL, FILL_MAP, CREATE_MAP, MARK_MAP, FLAG_MAP, TURN_MAP, GAME_PERIOD } from './actions'
 
 function router(state = 'index', action) {
     switch (action.type) {
@@ -45,7 +45,8 @@ function map(state = [], action) {
         }
         return map
     case CREATE_MAP:
-        var newState = state.map((v, i) => v.map((v1, i1) => v1));
+        // var newState = state.map((v, i) => v.map((v1, i1) => v1));
+        // var newState = state;
 
         let { value } = level;
         let mines = [x + '-' + y];
@@ -56,21 +57,77 @@ function map(state = [], action) {
             mine = mineArray.join('-');
             if (mines.indexOf(mine) === -1) {
                 mines.push(mine);
-                // newState[mineArray[1]][mineArray[0]] = [1, 1]
-                newState[mineArray[1]][mineArray[0]] = [1, 'x']
+                state[mineArray[1]][mineArray[0]] = [1, 'x']
                 i++;
             }
         }
-        newState[y][x][1] = newState[y][x][0]
-            // console.log(newState);
-        return newState
+        // newState[y][x][1] = newState[y][x][0]
+        // console.log(newState);
+        // return newState
     case MARK_MAP:
-        return state.map((v, i) => v.map((v1, i1) => {
-            if (i === y && i1 === x) {
-                return [v1[0], v1[0]]
+        state = state.map((v, i) => v.map((v1, i1) => v1.slice()));
+        let markList = [
+            [y, x]
+        ];
+        var firstLoop = true;
+        while (true) {
+            let [y, x] = markList.pop();
+            let mineCount = [
+                [y - 1, x - 1],
+                [y - 1, x],
+                [y - 1, x + 1],
+                [y, x - 1],
+                [y, x + 1],
+                [y + 1, x - 1],
+                [y + 1, x],
+                [y + 1, x + 1]
+            ].reduce(function (prev, cur) {
+                if (state[cur[0]] && state[cur[0]][cur[1]]) {
+                    return prev + state[cur[0]][cur[1]][0]
+                }
+                return prev
+            }, 0)
+
+            if (firstLoop || mineCount === 0) {
+                state[y][x][1] = mineCount
             }
-            return v1
-        }))
+            firstLoop = false;
+            if (mineCount === 0) {
+                [
+                    [y - 1, x],
+                    [y, x + 1],
+                    [y + 1, x],
+                    [y, x - 1]
+                ].forEach(v => {
+                    if (state[v[0]] && state[v[0]][v[1]] && state[v[0]][v[1]][1] === 'x') {
+                        markList.push(v)
+                    }
+                })
+            }
+            if (markList.length === 0) {
+                break
+            }
+        }
+        return state
+    case FLAG_MAP:
+        state = state.map((v, i) => v.map((v1, i1) => v1.slice()));
+        let flagLoop = {
+            x: 'flag',
+            flag: 'question',
+            question: 'x',
+        }
+        if (flagLoop[state[y][x][1]]) {
+            state[y][x][1] = flagLoop[state[y][x][1]]
+        }
+        return state
+    case TURN_MAP:
+        state = state.map((v, i) => v.map((v1, i1) => {
+            if (v1[0] === 1) {
+                v1[1] = 'mine'
+            }
+            return v1.slice()
+        }));
+        return state
     default:
         return state
     }

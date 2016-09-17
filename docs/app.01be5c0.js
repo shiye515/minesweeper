@@ -73,7 +73,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(208);
+	__webpack_require__(209);
 
 	var state = {};
 	// try {
@@ -23075,6 +23075,10 @@
 	    value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 	var _redux = __webpack_require__(180);
 
 	var _config = __webpack_require__(198);
@@ -23126,56 +23130,123 @@
 	    var y = action.y;
 	    var size = action.size;
 	    var level = action.level;
+	    var firstLoop;
 
-	    switch (action.type) {
-	        case _actions.FILL_MAP:
-	            var _map = [];
-	            if (size && size.length > 0) {
-	                for (var i = 0; i < size[1]; i++) {
-	                    _map[i] = [];
-	                    for (var j = 0; j < size[0]; j++) {
-	                        _map[i][j] = [0, 'x'];
+	    var _ret = function () {
+	        switch (action.type) {
+	            case _actions.FILL_MAP:
+	                var map = [];
+	                if (size && size.length > 0) {
+	                    for (var i = 0; i < size[1]; i++) {
+	                        map[i] = [];
+	                        for (var j = 0; j < size[0]; j++) {
+	                            map[i][j] = [0, 'x'];
+	                        }
 	                    }
 	                }
-	            }
-	            return _map;
-	        case _actions.CREATE_MAP:
-	            var newState = state.map(function (v, i) {
-	                return v.map(function (v1, i1) {
-	                    return v1;
-	                });
-	            });
+	                return {
+	                    v: map
+	                };
+	            case _actions.CREATE_MAP:
+	                // var newState = state.map((v, i) => v.map((v1, i1) => v1));
+	                // var newState = state;
 
-	            var value = level.value;
+	                var value = level.value;
 
-	            var mines = [x + '-' + y];
-	            var mine = void 0;
-	            var mineArray = void 0;
-	            for (var _i = 0; _i < value[2];) {
-	                mineArray = [randomInt(value[0] - 1), randomInt(value[1] - 1)];
-	                mine = mineArray.join('-');
-	                if (mines.indexOf(mine) === -1) {
-	                    mines.push(mine);
-	                    // newState[mineArray[1]][mineArray[0]] = [1, 1]
-	                    newState[mineArray[1]][mineArray[0]] = [1, 'x'];
-	                    _i++;
+	                var mines = [x + '-' + y];
+	                var mine = void 0;
+	                var mineArray = void 0;
+	                for (var _i = 0; _i < value[2];) {
+	                    mineArray = [randomInt(value[0] - 1), randomInt(value[1] - 1)];
+	                    mine = mineArray.join('-');
+	                    if (mines.indexOf(mine) === -1) {
+	                        mines.push(mine);
+	                        state[mineArray[1]][mineArray[0]] = [1, 'x'];
+	                        _i++;
+	                    }
 	                }
-	            }
-	            newState[y][x][1] = newState[y][x][0];
+	            // newState[y][x][1] = newState[y][x][0]
 	            // console.log(newState);
-	            return newState;
-	        case _actions.MARK_MAP:
-	            return state.map(function (v, i) {
-	                return v.map(function (v1, i1) {
-	                    if (i === y && i1 === x) {
-	                        return [v1[0], v1[0]];
-	                    }
-	                    return v1;
+	            // return newState
+	            case _actions.MARK_MAP:
+	                state = state.map(function (v, i) {
+	                    return v.map(function (v1, i1) {
+	                        return v1.slice();
+	                    });
 	                });
-	            });
-	        default:
-	            return state;
-	    }
+	                var markList = [[y, x]];
+	                firstLoop = true;
+
+	                while (true) {
+	                    var _markList$pop = markList.pop();
+
+	                    var _markList$pop2 = _slicedToArray(_markList$pop, 2);
+
+	                    var _y = _markList$pop2[0];
+	                    var _x5 = _markList$pop2[1];
+
+	                    var mineCount = [[_y - 1, _x5 - 1], [_y - 1, _x5], [_y - 1, _x5 + 1], [_y, _x5 - 1], [_y, _x5 + 1], [_y + 1, _x5 - 1], [_y + 1, _x5], [_y + 1, _x5 + 1]].reduce(function (prev, cur) {
+	                        if (state[cur[0]] && state[cur[0]][cur[1]]) {
+	                            return prev + state[cur[0]][cur[1]][0];
+	                        }
+	                        return prev;
+	                    }, 0);
+
+	                    if (firstLoop || mineCount === 0) {
+	                        state[_y][_x5][1] = mineCount;
+	                    }
+	                    firstLoop = false;
+	                    if (mineCount === 0) {
+	                        [[_y - 1, _x5], [_y, _x5 + 1], [_y + 1, _x5], [_y, _x5 - 1]].forEach(function (v) {
+	                            if (state[v[0]] && state[v[0]][v[1]] && state[v[0]][v[1]][1] === 'x') {
+	                                markList.push(v);
+	                            }
+	                        });
+	                    }
+	                    if (markList.length === 0) {
+	                        break;
+	                    }
+	                }
+	                return {
+	                    v: state
+	                };
+	            case _actions.FLAG_MAP:
+	                state = state.map(function (v, i) {
+	                    return v.map(function (v1, i1) {
+	                        return v1.slice();
+	                    });
+	                });
+	                var flagLoop = {
+	                    x: 'flag',
+	                    flag: 'question',
+	                    question: 'x'
+	                };
+	                if (flagLoop[state[y][x][1]]) {
+	                    state[y][x][1] = flagLoop[state[y][x][1]];
+	                }
+	                return {
+	                    v: state
+	                };
+	            case _actions.TURN_MAP:
+	                state = state.map(function (v, i) {
+	                    return v.map(function (v1, i1) {
+	                        if (v1[0] === 1) {
+	                            v1[1] = 'mine';
+	                        }
+	                        return v1.slice();
+	                    });
+	                });
+	                return {
+	                    v: state
+	                };
+	            default:
+	                return {
+	                    v: state
+	                };
+	        }
+	    }();
+
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	}
 
 	function game() {
@@ -23267,6 +23338,8 @@
 	exports.fillMap = fillMap;
 	exports.createMap = createMap;
 	exports.markMap = markMap;
+	exports.flagMap = flagMap;
+	exports.turnMap = turnMap;
 	exports.startGame = startGame;
 	exports.endGame = endGame;
 	/*
@@ -23278,14 +23351,18 @@
 	var FILL_MAP = exports.FILL_MAP = 'FILL_MAP';
 	var CREATE_MAP = exports.CREATE_MAP = 'CREATE_MAP';
 	var MARK_MAP = exports.MARK_MAP = 'MARK_MAP';
+	var FLAG_MAP = exports.FLAG_MAP = 'FLAG_MAP';
+	var TURN_MAP = exports.TURN_MAP = 'TURN_MAP';
 	var GAME_PERIOD = exports.GAME_PERIOD = 'GAME_PERIOD';
 
 	function changeRouter(router) {
 	    return { type: CHANGE_ROUTER, router: router };
 	}
+
 	function changeLevel(level) {
 	    return { type: CHANGE_LEVEL, level: level };
 	}
+
 	function fillMap(size) {
 	    return { type: FILL_MAP, size: size };
 	}
@@ -23293,8 +23370,17 @@
 	function createMap(level, x, y) {
 	    return { type: CREATE_MAP, level: level, x: x, y: y };
 	}
+
 	function markMap(x, y) {
 	    return { type: MARK_MAP, x: x, y: y };
+	}
+
+	function flagMap(x, y) {
+	    return { type: FLAG_MAP, x: x, y: y };
+	}
+
+	function turnMap(x, y) {
+	    return { type: TURN_MAP, x: x, y: y };
 	}
 
 	function startGame() {
@@ -23550,7 +23636,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	__webpack_require__(207);
+	__webpack_require__(208);
 
 	var Game = function (_React$Component) {
 	    _inherits(Game, _React$Component);
@@ -23663,9 +23749,10 @@
 
 	var statusMap = {
 	    x: '',
-	    flag: 'f',
+	    flag: '',
 	    question: '?',
-	    0: 'b',
+	    mine: '×',
+	    0: 0,
 	    1: 1,
 	    2: 2,
 	    3: 3,
@@ -23685,6 +23772,7 @@
 	        var _this = _possibleConstructorReturn(this, (Tile.__proto__ || Object.getPrototypeOf(Tile)).call(this, props));
 
 	        _this.mark = _this.mark.bind(_this);
+	        _this.flag = _this.flag.bind(_this);
 	        return _this;
 	    }
 
@@ -23699,25 +23787,51 @@
 	            var game = _props.game;
 	            var status = _props.status;
 
+	            if (typeof status[1] === 'number') {
+	                return;
+	            }
 	            if (game === 'waiting') {
 	                dispatch((0, _actions.startGame)());
 	                dispatch((0, _actions.createMap)(level, x, y));
+	            } else if (status[0] === 1) {
+	                dispatch((0, _actions.turnMap)());
 	            } else {
 	                dispatch((0, _actions.markMap)(x, y));
 	            }
 	        }
 	    }, {
-	        key: 'render',
-	        value: function render() {
+	        key: 'flag',
+	        value: function flag(e) {
+	            e.preventDefault();
 	            var _props2 = this.props;
 	            var dispatch = _props2.dispatch;
+	            var level = _props2.level;
 	            var x = _props2.x;
 	            var y = _props2.y;
+	            var game = _props2.game;
 	            var status = _props2.status;
+
+	            if (typeof status[1] === 'number') {
+	                return;
+	            }
+	            dispatch((0, _actions.flagMap)(x, y));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props3 = this.props;
+	            var dispatch = _props3.dispatch;
+	            var x = _props3.x;
+	            var y = _props3.y;
+	            var status = _props3.status;
 
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'tile', onClick: this.mark },
+	                {
+	                    className: 'tile status-' + status[1],
+	                    onClick: this.mark,
+	                    onContextMenu: this.flag
+	                },
 	                statusMap[status[1]]
 	            );
 	        }
@@ -23742,13 +23856,14 @@
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 207 */
+/* 207 */,
+/* 208 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

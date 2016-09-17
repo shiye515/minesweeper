@@ -8,32 +8,59 @@
     text-align: center;
     line-height: 13px;
     font-weight: bold;
+    color: #6d6d6d;
+    cursor: pointer;
     &:hover {
         background-color: #dee6ed;
     }
-    &.number,
-    &.open {
+    &.status-0,
+    &.status-1,
+    &.status-2,
+    &.status-3,
+    &.status-4,
+    &.status-5,
+    &.status-6,
+    &.status-7,
+    &.status-8 {
         border: 1px solid grey;
         padding: 2px;
+        cursor: default;
     }
-    &.number {
+    &.status-1,
+    &.status-2,
+    &.status-3,
+    &.status-4,
+    &.status-5,
+    &.status-6,
+    &.status-7,
+    &.status-8 {
         background-color: rgb(213, 187, 191);
     }
-    &.flagged {
+    &.status-0 {
+        text-indent: -100000px;
+        border-style: solid;
+    }
+    &.status-1 {
+        color: blue;
+    }
+    &.status-2 {
+        color: darkgreen;
+    }
+    &.status-3 {
+        color: red;
+    }
+    &.status-flag {
         background-color: red;
         background-color: rgba(255, 61, 61, 0.82);
+        background-image: url(../../assets/flag.svg);
+        background-size: 100% 100%;
     }
-    &.question {
+    &.status-question {
         background-color: lightblue;
     }
-    &.explode {
-        color: red;
-        background-color: white;
-    }
-    &.unknown:active {
-        border-style: inset;
-    }
-    &.test {
-        border-style: inset;
+    &.status-mine {
+        font-weight: bold;
+        color: #000;
+        background-color: #dee6ed;
     }
 }

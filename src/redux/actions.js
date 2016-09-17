@@ -7,14 +7,18 @@ export const CHANGE_LEVEL = 'CHANGE_LEVEL'
 export const FILL_MAP = 'FILL_MAP'
 export const CREATE_MAP = 'CREATE_MAP'
 export const MARK_MAP = 'MARK_MAP'
+export const FLAG_MAP = 'FLAG_MAP'
+export const TURN_MAP = 'TURN_MAP'
 export const GAME_PERIOD = 'GAME_PERIOD'
 
 export function changeRouter(router) {
     return { type: CHANGE_ROUTER, router }
 }
+
 export function changeLevel(level) {
     return { type: CHANGE_LEVEL, level }
 }
+
 export function fillMap(size) {
     return { type: FILL_MAP, size }
 }
@@ -22,8 +26,17 @@ export function fillMap(size) {
 export function createMap(level, x, y) {
     return { type: CREATE_MAP, level, x, y }
 }
+
 export function markMap(x, y) {
     return { type: MARK_MAP, x, y }
+}
+
+export function flagMap(x, y) {
+    return { type: FLAG_MAP, x, y }
+}
+
+export function turnMap(x, y) {
+    return { type: TURN_MAP, x, y }
 }
 
 export function startGame() {
