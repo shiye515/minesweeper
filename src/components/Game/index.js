@@ -30,7 +30,15 @@ class Game extends React.Component {
         }, 0)
         let left = level.value[2] - markedNum;
         if (left === 0 && allMarked) {
-            alert('成功了!')
+            setTimeout(function () {
+                var name = window.prompt('扫雷成功，请输入您的昵称：');
+                var scoresref = window.wilddog.sync().ref('scores');
+                scoresref.push({
+                    name: name || '佚名',
+                    level: level.name,
+                    time: 666
+                })
+            }, 0)
         }
         return (
             <div className="game">

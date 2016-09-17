@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import Index from './components/Index';
 import Game from './components/Game';
+import Score from './components/Score';
 
 class App extends React.Component {
     constructor(props) {
@@ -14,6 +15,7 @@ class App extends React.Component {
             <div id="app">
                 {router === 'index' ? <Index /> : null}
                 {router === 'game' ? <Game /> : null}
+                <Score />
             </div>
         );
     }
