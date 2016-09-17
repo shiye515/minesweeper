@@ -1,4 +1,5 @@
 var path = require('path');
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -31,6 +32,12 @@ module.exports = {
         return [require('autoprefixer')];
     },
     plugins: [
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compressor: {
+                warnings: false
+            }
+        }),
         new ExtractTextPlugin('[name].[contenthash:7].css'),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, '../src/index.html'),

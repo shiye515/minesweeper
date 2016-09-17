@@ -19,11 +19,26 @@ class Game extends React.Component {
     }
     render() {
         let { dispatch, level, map } = this.props;
+        let allMarked = true;
+        let markedNum = map.reduce((prev, cur) => {
+            return prev + cur.reduce((prev, cur) => {
+                if (cur[0] === 0 && typeof cur[1] !== 'number') {
+                    allMarked = false
+                }
+                return prev + (cur[1] === 'flag' ? 1 : 0)
+            }, 0)
+        }, 0)
+        let left = level.value[2] - markedNum;
+        if (left === 0 && allMarked) {
+            alert('成功了!')
+        }
         return (
             <div className="game">
-                <div>
+                <div className="game-status">
                     <button onClick={()=>dispatch(changeRouter('index'))}>返回首页</button>
                     <button onClick={this.restart}>重新开始</button>
+                    <label htmlFor="mineleft"> 剩余：</label>
+                    <input type="text" name="mineleft" readOnly="readonly" value={left}/>
                 </div>
                 <div className="board">
                     {map.map((v, i)=>(

@@ -87,17 +87,21 @@ function map(state = [], action) {
                 }
                 return prev
             }, 0)
-
-            if (firstLoop || mineCount === 0) {
-                state[y][x][1] = mineCount
-            }
-            firstLoop = false;
+            state[y][x][1] = mineCount
+                // if (firstLoop || mineCount === 0) {
+                //     state[y][x][1] = mineCount
+                // }
+                // firstLoop = false;
             if (mineCount === 0) {
                 [
+                    [y - 1, x - 1],
                     [y - 1, x],
+                    [y - 1, x + 1],
+                    [y, x - 1],
                     [y, x + 1],
+                    [y + 1, x - 1],
                     [y + 1, x],
-                    [y, x - 1]
+                    [y + 1, x + 1]
                 ].forEach(v => {
                     if (state[v[0]] && state[v[0]][v[1]] && state[v[0]][v[1]][1] === 'x') {
                         markList.push(v)
